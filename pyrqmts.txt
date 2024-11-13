@@ -1,0 +1,10 @@
+# command: $pip install -r pyrqmts.txt
+jupyter
+python-decouple
+pymysql
+datetime
+pandas
+numpy
+matplotlib
+tensorflow
+prettytable
