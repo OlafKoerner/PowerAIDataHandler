@@ -196,6 +196,19 @@ class ClassPowerAIDataHandler() :
 
         return train_x, train_y, test_x, test_y
 
+    
+    def generate_test_data_from_events(self, event_ratio) :
+        test_x  = np.array([])
+        test_y  = np.array([])
+
+        for key in self.device_list :
+            for i in range(len(self.event_list[key])) :
+                if i >= len(self.event_list[key]) * (1 - event_ratio) :        
+                    test_x = np.append(test_x, np.array(self.event_list[key][i]['value']).astype(float))
+                    test_y = np.append(test_y, np.array(self.event_list[key][i]['device']).astype(float))
+        
+        return test_x, test_y
+
 
     def compare_with_testdata(self, predict_y, test_x, test_y) :
         self.cnt_wrong   = np.zeros(len(self.device_list))
