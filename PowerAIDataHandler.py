@@ -2,6 +2,10 @@
 from decouple import Config, RepositoryEnv, Csv #https://github.com/HBNetwork/python-decouple/issues/116
 import numpy as np
 import pymysql
+#import requests
+#import urllib
+from urllib.request import urlopen
+import json
 from datetime import datetime
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -44,25 +48,30 @@ class ClassPowerAIDataHandler() :
         
 
     def read_events_from_db(self) :
-       
-        conn = pymysql.connect(
-            host = self.config('myhost'),
-            user = self.config('myuser'),
-            password = self.config('mypassword'),
-            database = self.config('mydatabase'),
-            cursorclass = pymysql.cursors.DictCursor)
-
-        cur = conn.cursor()
 
         self.event_list = dict([(key, []) for key in self.device_list.keys()])
 
         for key in self.device_list.keys() :
-            # read from mysql db
-            cur.execute(
-                "SELECT * FROM data WHERE device = " + str(key) + " AND timestamp > " + str(self.data_start) + " LIMIT " + str(self.data_limit))
-            # get all rows where device is active
-            self.data_list = cur.fetchall()
-            
+
+            if self.config('myhost') == 'localhost':
+                conn = pymysql.connect(
+                    host=self.config('myhost'),
+                    user=self.config('myuser'),
+                    password=self.config('mypassword'),
+                    database=self.config('mydatabase'),
+                    cursorclass=pymysql.cursors.DictCursor)
+                cur = conn.cursor()
+
+                # read from mysql db
+                cur.execute("SELECT * FROM data WHERE device = " + str(key) + " AND timestamp > " + str(self.data_start) + " LIMIT " + str(self.data_limit))
+                # get all rows where device is active
+                self.data_list = cur.fetchall()
+                conn.close()
+            else:
+                with urlopen(self.config('myhost') + '/device_data/' + str(key) + '/' + str(self.data_start)) as response :
+                    self.data_list = json.loads(response.read())
+                print(self.data_list)
+
             # store values in dict = { device_id : [ timestamp : [], value : [], device : [] ] }
             timestamp_before = 0
             event_id = -1        
@@ -77,8 +86,6 @@ class ClassPowerAIDataHandler() :
                 self.event_list[key][event_id]['device'].append(row['device'])
 
                 timestamp_before = row['timestamp']
-        
-        conn.close()     
 
     
     def filter_events_by_minpow(self) :
