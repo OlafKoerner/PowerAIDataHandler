@@ -70,8 +70,7 @@ class ClassPowerAIDataHandler() :
             else:
                 with urlopen(self.config('myhost') + '/device_data/' + str(key) + '/' + str(self.data_start)) as response :
                     self.data_list = json.loads(response.read())
-                print(self.data_list)
-
+                
             # store values in dict = { device_id : [ timestamp : [], value : [], device : [] ] }
             timestamp_before = 0
             event_id = -1        
@@ -87,9 +86,26 @@ class ClassPowerAIDataHandler() :
 
                 timestamp_before = row['timestamp']
 
+
+    def delete_events_from_db(self, event_delete_list):
+        for event in event_delete_list:  
+            if self.config('myhost') == 'localhost':
+                conn = pymysql.connect(
+                    host=self.config('myhost'),
+                    user=self.config('myuser'),
+                    password=self.config('mypassword'),
+                    database=self.config('mydatabase'),
+                    cursorclass=pymysql.cursors.DictCursor)
+                cur = conn.cursor()
+                # write to local mysql db
+                cur.execute(f"UPDATE data SET device = device & ~{event['device']} WHERE timestamp >= {event['from']} AND timestamp <= {event['to']};")
+                conn.close()
+            else:
+                with urlopen(f"{self.config('myhost')}/remove/{event['device']}/{event['from']}/{event['to']}") as response :
+                    print(json.loads(response.read()))
+        
     
     def filter_events_by_minpow(self) :
-        
         for key in self.device_list :
             
             for i in range(len(self.event_list[key])) :
@@ -106,12 +122,11 @@ class ClassPowerAIDataHandler() :
                             delete_list = np.delete(delete_list, -1)
                             delete_mode = False 
                 
-                #print(f'key: {key}, event: {i}, delete_list: {delete_list.astype(int)}')
-
                 self.event_list[key][i]['timestamp']    = np.delete(self.event_list[key][i]['timestamp'],   delete_list.astype(int))
                 self.event_list[key][i]['value']        = np.delete(self.event_list[key][i]['value'],       delete_list.astype(int))
                 self.event_list[key][i]['device']       = np.delete(self.event_list[key][i]['device'],      delete_list.astype(int))
    
+    
     def print_events(self) :
 
         for key in self.device_list :
@@ -128,7 +143,7 @@ class ClassPowerAIDataHandler() :
                     
                     date_locator = mdates.AutoDateLocator()
                     date_form = mdates.AutoDateFormatter(date_locator)
-                    #date_form = DateFormatter("%d.%m.%y %H:%M:%S")
+                    #alternative: date_form = DateFormatter("%d.%m.%y %H:%M:%S")
                     a.xaxis.set_major_formatter(date_form)
                     a.xaxis.set_major_locator(date_locator)
                     a.set_title("Plot " + str(i + 1) + "/" + str(len(self.event_list[key])) + " for " + self.device_list[key]['name'] + " from " + x[0].strftime("%d.%m.%Y"))
