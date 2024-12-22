@@ -95,7 +95,7 @@ class ClassPowerAIDataHandler() :
     def delete_event_from_device_from_db(self, device_id, event_id, timestamp_check):
         ts_from  = self.event_list[device_id][event_id-1]['timestamp'][0]
         ts_to    = self.event_list[device_id][event_id-1]['timestamp'][-1]
-        if int(ts_from) <= timestamp_check <= int(ts_to):
+        if int(ts_from) <= int(timestamp_check) <= int(ts_to):
             if self.config('myhost') == 'localhost':
                 conn = pymysql.connect(
                     host=self.config('myhost'),
