@@ -92,11 +92,11 @@ class ClassPowerAIDataHandler() :
             self.event_list[device_id].pop(event-1) #-1, to start from 1 in Jupyter
                
 
-    def delete_events_from_db(self, event_delete_list): #event_delete_list = [ {'device' : device_id}, {'event_id' : event_id}, 'check_ts' : ts_sample ]
-        for event in event_delete_list:
-            ts_from  = self.event_list[event['device']][event['event_id']]['timestamp'][0]  
-            ts_to    = self.event_list[event['device']][event['event_id']]['timestamp'][-1]
-            if int(event['check_ts']) >= int(ts_from) and event['check_ts'] <= int(ts_to):
+    def delete_events_from_device_from_db(self, device_id, event_id, timestamp_check):
+        for event in sorted(event_delete_list, reverse=True):
+            ts_from  = self.event_list[device_id][event_id]['timestamp'][0]
+            ts_to    = self.event_list[device_id][event_id]['timestamp'][-1]
+            if int(ts_from) <= timestamp_check <= int(ts_to):
                 if self.config('myhost') == 'localhost':
                     conn = pymysql.connect(
                         host=self.config('myhost'),
@@ -106,10 +106,10 @@ class ClassPowerAIDataHandler() :
                         cursorclass=pymysql.cursors.DictCursor)
                     cur = conn.cursor()
                     # write to local mysql db
-                    cur.execute(f"UPDATE data SET device = device & ~{event['device']} WHERE timestamp >= {ts_from} AND timestamp <= {ts_to};")
+                    cur.execute(f"UPDATE data SET device = device & ~{device_id} WHERE timestamp >= {ts_from} AND timestamp <= {ts_to};")
                     conn.close()
                 else:
-                    with urlopen(f"{self.config('myhost')}/update/{-int(event['device'])}/{ts_from}/{ts_to}") as response :
+                    with urlopen(f"{self.config('myhost')}/update/{-device_id}/{ts_from}/{ts_to}") as response :
                         print(json.loads(response.read()))
         
     
