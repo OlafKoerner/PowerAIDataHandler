@@ -89,7 +89,7 @@ class ClassPowerAIDataHandler() :
 
     def skip_events(self, event_skip_list): #event_skip_list = [ {'device' : device_id}, {'event_id' : event_id} ]
         for event in event_skip_list:  
-            self.event_list[event['device']].pop([event['event_id']-1])
+            self.event_list[event['device']].pop([event['event_id']-1]) #-1, to start from 1 in Jupyter
                
 
     def delete_events_from_db(self, event_delete_list): #event_delete_list = [ {'device' : device_id}, {'event_id' : event_id}, 'check_ts' : ts_sample ]
