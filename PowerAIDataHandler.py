@@ -109,7 +109,7 @@ class ClassPowerAIDataHandler() :
                     cur.execute(f"UPDATE data SET device = device & ~{event['device']} WHERE timestamp >= {ts_from} AND timestamp <= {ts_to};")
                     conn.close()
                 else:
-                    with urlopen(f"{self.config('myhost')}/remove/{event['device']}/{ts_from}/{ts_to}") as response :
+                    with urlopen(f"{self.config('myhost')}/update/{-int(event['device'])}/{ts_from}/{ts_to}") as response :
                         print(json.loads(response.read()))
         
     
