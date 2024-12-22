@@ -87,22 +87,30 @@ class ClassPowerAIDataHandler() :
                 timestamp_before = row['timestamp']
 
 
-    def delete_events_from_db(self, event_delete_list):
-        for event in event_delete_list:  
-            if self.config('myhost') == 'localhost':
-                conn = pymysql.connect(
-                    host=self.config('myhost'),
-                    user=self.config('myuser'),
-                    password=self.config('mypassword'),
-                    database=self.config('mydatabase'),
-                    cursorclass=pymysql.cursors.DictCursor)
-                cur = conn.cursor()
-                # write to local mysql db
-                cur.execute(f"UPDATE data SET device = device & ~{event['device']} WHERE timestamp >= {event['from']} AND timestamp <= {event['to']};")
-                conn.close()
-            else:
-                with urlopen(f"{self.config('myhost')}/remove/{event['device']}/{event['from']}/{event['to']}") as response :
-                    print(json.loads(response.read()))
+    def skip_events(self, event_skip_list): #event_skip_list = [ {'device' : device_id}, {'event_id' : event_id} ]
+        for event in event_skip_list:  
+            self.event_list[event['device']].remove([event['event_id']])
+               
+
+    def delete_events_from_db(self, event_delete_list): #event_delete_list = [ {'device' : device_id}, {'event_id' : event_id}, 'check_ts' : ts_sample ]
+        for event in event_delete_list:
+            ts_from  = self.event_list[event['device']][event['event_id']]['timestamp'][0]  
+            ts_to    = self.event_list[event['device']][event['event_id']]['timestamp'][-1]
+            if int(event['check_ts']) >= int(ts_from) and event['check_ts'] <= int(ts_to):
+                if self.config('myhost') == 'localhost':
+                    conn = pymysql.connect(
+                        host=self.config('myhost'),
+                        user=self.config('myuser'),
+                        password=self.config('mypassword'),
+                        database=self.config('mydatabase'),
+                        cursorclass=pymysql.cursors.DictCursor)
+                    cur = conn.cursor()
+                    # write to local mysql db
+                    cur.execute(f"UPDATE data SET device = device & ~{event['device']} WHERE timestamp >= {ts_from} AND timestamp <= {ts_to};")
+                    conn.close()
+                else:
+                    with urlopen(f"{self.config('myhost')}/remove/{event['device']}/{ts_from}/{ts_to}") as response :
+                        print(json.loads(response.read()))
         
     
     def filter_events_by_minpow(self) :
