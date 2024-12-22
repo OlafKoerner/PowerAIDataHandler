@@ -87,14 +87,14 @@ class ClassPowerAIDataHandler() :
                 timestamp_before = row['timestamp']
 
 
-    def skip_events_from_device(self, device_id, event_skip_list): #event_skip_list = [ {'device' : device_id}, {'event_id' : event_id} ]
-        for event in sorted(event_skip_list, reverse=True):
-            self.event_list[device_id].pop(event-1) #-1, to start from 1 in Jupyter
+    def skip_events_from_device(self, device_id, event_skip_list):
+        for event_id in sorted(event_skip_list, reverse=True):
+            self.event_list[device_id].pop(event_id-1) #-1, to start from 1 in Jupyter
                
 
     def delete_event_from_device_from_db(self, device_id, event_id, timestamp_check):
-        ts_from  = self.event_list[device_id][event_id]['timestamp'][0]
-        ts_to    = self.event_list[device_id][event_id]['timestamp'][-1]
+        ts_from  = self.event_list[device_id][event_id-1]['timestamp'][0]
+        ts_to    = self.event_list[device_id][event_id-1]['timestamp'][-1]
         if int(ts_from) <= timestamp_check <= int(ts_to):
             if self.config('myhost') == 'localhost':
                 conn = pymysql.connect(
