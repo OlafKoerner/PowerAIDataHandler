@@ -162,6 +162,8 @@ class ClassPowerAIDataHandler() :
                     x = x[20:40]
                     y = y[20:40]
 
+                    #add fft
+                    #https://pythonnumericalmethods.studentorg.berkeley.edu/notebooks/chapter24.04-FFT-in-Python.html
 
     def generate_training_data_from_events(self, window_length, event_ratio) :
 
