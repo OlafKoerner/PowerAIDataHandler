@@ -44,7 +44,6 @@ class ClassPowerAIDataHandler() :
 
         #init member vars 
         self.data_start = self.config('mydata_start')
-        self.data_limit = self.config('mydata_limit')
         
 
     def read_events_from_db(self) :
@@ -63,7 +62,7 @@ class ClassPowerAIDataHandler() :
                 cur = conn.cursor()
 
                 # read from mysql db
-                cur.execute("SELECT * FROM data WHERE device = " + str(key) + " AND timestamp > " + str(self.data_start) + " LIMIT " + str(self.data_limit))
+                cur.execute("SELECT * FROM data WHERE device = " + str(key) + " AND timestamp > " + str(self.data_start))
                 # get all rows where device is active
                 self.data_list = cur.fetchall()
                 conn.close()
