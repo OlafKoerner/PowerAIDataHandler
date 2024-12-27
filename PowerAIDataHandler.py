@@ -161,9 +161,34 @@ class ClassPowerAIDataHandler() :
                     x = x[20:40]
                     y = y[20:40]
 
-                    #add fft
-                    #https://pythonnumericalmethods.studentorg.berkeley.edu/notebooks/chapter24.04-FFT-in-Python.html
 
+    def draw_event_fft(self, device_id, event_id):
+        #https://pythonnumericalmethods.studentorg.berkeley.edu/notebooks/chapter24.04-FFT-in-Python.html    
+        # sampling rate
+        sr = 2000
+        X = np.fft(self.event_list[device_id][event_id]['value'])
+        N = len(X)
+        n = np.arange(N)
+        T = N/sr
+        freq = n/T 
+
+        plt.figure(figsize = (12, 6))
+        plt.subplot(121)
+
+        plt.stem(freq, np.abs(X), 'b', \
+                markerfmt=" ", basefmt="-b")
+        plt.xlabel('Freq (Hz)')
+        plt.ylabel('FFT Amplitude |X(freq)|')
+        plt.xlim(0, 10)
+
+        plt.subplot(122)
+        plt.plot(t, np.ifft(X), 'r')
+        plt.xlabel('Time (s)')
+        plt.ylabel('Amplitude')
+        plt.tight_layout()
+        plt.show()
+    
+    
     def generate_training_data_from_events(self, window_length, event_ratio) :
 
         train_x = np.array([])
