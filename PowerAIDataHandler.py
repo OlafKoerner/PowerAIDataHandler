@@ -108,7 +108,7 @@ class ClassPowerAIDataHandler() :
                 cur.execute(f"UPDATE data SET device = device & ~{device_id} WHERE timestamp >= {ts_from} AND timestamp <= {ts_to};")
                 conn.close()
             else:
-                with urlopen(f"{self.config('myhost')}/update/{-device_id}/{ts_from}/{ts_to}") as response :
+                with urlopen(f"{self.config('myhost')}/update/{device_id}/{ts_from}/{ts_to}/0") as response :
                     print(json.loads(response.read()))
 
     
