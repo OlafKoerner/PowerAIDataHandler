@@ -167,7 +167,7 @@ class ClassPowerAIDataHandler() :
         #https://pythonnumericalmethods.studentorg.berkeley.edu/notebooks/chapter24.04-FFT-in-Python.html    
         # sampling rate
         sr = 2000
-        X = fft(self.event_list[device_id][event_id]['value'].astype(float))
+        X = fft(self.event_list[device_id][event_id]['value'])
         N = len(X)
         n = np.arange(N)
         T = N/sr
