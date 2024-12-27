@@ -166,11 +166,12 @@ class ClassPowerAIDataHandler() :
     def draw_event_fft(self, device_id, event_id):
         #https://pythonnumericalmethods.studentorg.berkeley.edu/notebooks/chapter24.04-FFT-in-Python.html    
         # sampling rate
-        sr = 2000
+        sr = 1.0
         # sampling interval
-        ts = 1.0/sr
-        t = np.arange(0,1,ts)
-        X = fft(self.event_list[device_id][event_id]['value'])
+        #ts = 1.0/sr
+        #t = np.arange(0,self.event_list[device_id][event_id]['value'],ts)
+        x = self.event_list[device_id][event_id]['value']
+        X = fft(x)
         N = len(X)
         n = np.arange(N)
         T = N/sr
@@ -186,7 +187,7 @@ class ClassPowerAIDataHandler() :
         plt.xlim(0, 10)
 
         plt.subplot(122)
-        plt.plot(t, ifft(X), 'r')
+        plt.plot(x, ifft(X), 'r')
         plt.xlabel('Time (s)')
         plt.ylabel('Amplitude')
         plt.tight_layout()
