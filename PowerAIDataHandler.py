@@ -173,7 +173,7 @@ class ClassPowerAIDataHandler() :
         x = np.append(x, np.flip(x))
         X = fft(x)
         cut = 20
-        X[cut:-cut] = 0
+        X[-cut:cut] = 0
         N = len(X)
         n = np.arange(N)
         T = N/sr
