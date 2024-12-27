@@ -140,7 +140,7 @@ class ClassPowerAIDataHandler() :
             for i in range(len(self.event_list[key])) :
                 
                 x = pd.to_datetime(self.event_list[key][i]['timestamp'], utc=True, unit='ms')
-                y = np.array(self.event_list[key][i]['value']).astype(float)
+                y = np.array(self.event_list[key][i]['value'].astype(float))
                 
                 for ii in range(1) :
                     
