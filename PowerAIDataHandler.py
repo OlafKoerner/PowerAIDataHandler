@@ -168,14 +168,14 @@ class ClassPowerAIDataHandler() :
         # sampling rate
         sr = 1.0
         # sampling interval
-        ts = 1.0/sr
-        t = np.arange(0,self.event_list[device_id][event_id]['value'],ts)
+        ts = 1.0/sr        
         x = self.event_list[device_id][event_id]['value']
         X = fft(x)
         N = len(X)
         n = np.arange(N)
         T = N/sr
         freq = n/T 
+        t = np.arange(0, len(x), ts)
 
         plt.figure(figsize = (12, 6))
         plt.subplot(121)
