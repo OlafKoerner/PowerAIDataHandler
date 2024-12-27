@@ -171,6 +171,7 @@ class ClassPowerAIDataHandler() :
         ts = 1.0/sr        
         x = self.event_list[device_id][event_id]['value']
         X = fft(x)
+        X = X[100:]
         N = len(X)
         n = np.arange(N)
         T = N/sr
