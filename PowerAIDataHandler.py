@@ -166,7 +166,7 @@ class ClassPowerAIDataHandler() :
         #https://pythonnumericalmethods.studentorg.berkeley.edu/notebooks/chapter24.04-FFT-in-Python.html    
         # sampling rate
         sr = 2000
-        X = np.fft(self.event_list[device_id][event_id]['value'])
+        X = np.fft(self.event_list[device_id][event_id]['value'].astype(float))
         N = len(X)
         n = np.arange(N)
         T = N/sr
@@ -188,7 +188,7 @@ class ClassPowerAIDataHandler() :
         plt.tight_layout()
         plt.show()
     
-    
+
     def generate_training_data_from_events(self, window_length, event_ratio) :
 
         train_x = np.array([])
