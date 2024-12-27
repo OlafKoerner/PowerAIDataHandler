@@ -168,8 +168,8 @@ class ClassPowerAIDataHandler() :
         # sampling rate
         sr = 1.0
         # sampling interval
-        #ts = 1.0/sr
-        #t = np.arange(0,self.event_list[device_id][event_id]['value'],ts)
+        ts = 1.0/sr
+        t = np.arange(0,self.event_list[device_id][event_id]['value'],ts)
         x = self.event_list[device_id][event_id]['value']
         X = fft(x)
         N = len(X)
@@ -184,10 +184,10 @@ class ClassPowerAIDataHandler() :
                 markerfmt=" ", basefmt="-b")
         plt.xlabel('Freq (Hz)')
         plt.ylabel('FFT Amplitude |X(freq)|')
-        plt.xlim(0, 10)
+        plt.xlim(0, 1)
 
         plt.subplot(122)
-        plt.plot(x, ifft(X), 'r')
+        plt.plot(t, ifft(X), 'r')
         plt.xlabel('Time (s)')
         plt.ylabel('Amplitude')
         plt.tight_layout()
