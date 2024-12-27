@@ -1,6 +1,7 @@
 # import libs
 from decouple import Config, RepositoryEnv, Csv #https://github.com/HBNetwork/python-decouple/issues/116
 import numpy as np
+from numpy.fft import fft, ifft
 import pymysql
 #import requests
 #import urllib
@@ -166,7 +167,7 @@ class ClassPowerAIDataHandler() :
         #https://pythonnumericalmethods.studentorg.berkeley.edu/notebooks/chapter24.04-FFT-in-Python.html    
         # sampling rate
         sr = 2000
-        X = np.fft(self.event_list[device_id][event_id]['value'].astype(float))
+        X = fft(self.event_list[device_id][event_id]['value'].astype(float))
         N = len(X)
         n = np.arange(N)
         T = N/sr
@@ -182,7 +183,7 @@ class ClassPowerAIDataHandler() :
         plt.xlim(0, 10)
 
         plt.subplot(122)
-        plt.plot(t, np.ifft(X), 'r')
+        plt.plot(t, ifft(X), 'r')
         plt.xlabel('Time (s)')
         plt.ylabel('Amplitude')
         plt.tight_layout()
