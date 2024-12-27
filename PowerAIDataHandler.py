@@ -172,8 +172,8 @@ class ClassPowerAIDataHandler() :
         x = self.event_list[device_id][event_id]['value']
         x = np.append(x, np.flip(x))
         X = fft(x)
-        cut = 500
-        X[-cut:cut] = 0
+        #cut = 500
+        #X[-cut:cut] = 0
         N = len(X)
         n = np.arange(N)
         T = N/sr
