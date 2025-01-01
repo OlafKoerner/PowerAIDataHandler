@@ -134,11 +134,20 @@ class ClassPowerAIDataHandler() :
                 self.event_list[key][i]['device']       = np.delete(self.event_list[key][i]['device'],      delete_list.astype(int))
    
     
-    def print_events(self) :
+    def print_events(self, device_id=0, event_id=0) :
 
-        for key in self.device_list :
+        if (device_id > 0):
+            #reduce lists to specified event
+            device_list_local = {device_id: [self.device_list[device_id]['name']]}
+            event_list_local  = {device_id: [self.event_list[device_id][event_id]]}
+        else:
+            #keep full lists to print all
+            device_list_local = self.device_list
+            event_list_local  = self.event_list
+
+        for key in device_list_local:
             
-            for i in range(len(self.event_list[key])) :
+            for i in range(len(event_list_local[key])) :
                 
                 x = pd.to_datetime(self.event_list[key][i]['timestamp'], utc=True, unit='ms')
                 y = np.array(self.event_list[key][i]['value'].astype(float))
@@ -170,7 +179,7 @@ class ClassPowerAIDataHandler() :
         # sampling interval
         ts = 1.0/sr        
         x = self.event_list[device_id][event_id]['value']
-        x = np.append(x, np.flip(x))
+        #x = np.append(x, np.flip(x)) #adding flipped event should reduce high amplitudes at edges 
         X = fft(x)
         #cut = 500
         #X[-cut:cut] = 0
