@@ -139,7 +139,10 @@ class ClassPowerAIDataHandler() :
         if (device_id > 0):
             #reduce lists to specified event
             device_list_local = {device_id: [self.device_list[device_id]['name']]}
-            event_list_local  = {device_id: [self.event_list[device_id][event_id]]}
+            if (event_id > 0):
+                event_list_local  = {device_id: [self.event_list[device_id][event_id-1]]}
+            else:
+                event_list_local  = self.event_list
         else:
             #keep full lists to print all
             device_list_local = self.device_list
@@ -150,7 +153,7 @@ class ClassPowerAIDataHandler() :
             for i in range(len(event_list_local[key])) :
                 
                 x = pd.to_datetime(self.event_list[key][i]['timestamp'], utc=True, unit='ms')
-                y = np.array(self.event_list[key][i]['value'].astype(float))
+                y = np.array(self.event_list[key][i]['value'])
                 
                 for ii in range(1) :
                     
@@ -178,7 +181,7 @@ class ClassPowerAIDataHandler() :
         sr = 1.0
         # sampling interval
         ts = 1.0/sr        
-        x = self.event_list[device_id][event_id]['value']
+        x = self.event_list[device_id][event_id-1]['value']
         #x = np.append(x, np.flip(x)) #adding flipped event should reduce high amplitudes at edges 
         X = fft(x)
         #cut = 500
@@ -207,7 +210,6 @@ class ClassPowerAIDataHandler() :
     
 
     def generate_training_data_from_events(self, window_length, event_ratio) :
-
         train_x = np.array([])
         train_y = np.array([])
         test_x  = np.array([])
