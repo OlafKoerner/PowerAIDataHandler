@@ -1,6 +1,7 @@
 # import libs
 from decouple import Config, RepositoryEnv, Csv #https://github.com/HBNetwork/python-decouple/issues/116
 import numpy as np
+from numpy.fft import fft, ifft
 import pymysql
 #import requests
 #import urllib
@@ -44,7 +45,6 @@ class ClassPowerAIDataHandler() :
 
         #init member vars 
         self.data_start = self.config('mydata_start')
-        self.data_limit = self.config('mydata_limit')
         
 
     def read_events_from_db(self) :
@@ -63,7 +63,7 @@ class ClassPowerAIDataHandler() :
                 cur = conn.cursor()
 
                 # read from mysql db
-                cur.execute("SELECT * FROM data WHERE device = " + str(key) + " AND timestamp > " + str(self.data_start) + " LIMIT " + str(self.data_limit))
+                cur.execute("SELECT * FROM data WHERE device = " + str(key) + " AND timestamp > " + str(self.data_start))
                 # get all rows where device is active
                 self.data_list = cur.fetchall()
                 conn.close()
@@ -105,7 +105,9 @@ class ClassPowerAIDataHandler() :
                     cursorclass=pymysql.cursors.DictCursor)
                 cur = conn.cursor()
                 # write to local mysql db
-                cur.execute(f"UPDATE data SET device = device & ~{device_id} WHERE timestamp >= {ts_from} AND timestamp <= {ts_to};")
+                #OKO cur.execute(f"UPDATE data SET device = device & ~{device_id} WHERE timestamp >= {ts_from} AND timestamp <= {ts_to};")
+                print(f"OKO DB execution disabled. Command requested:\nUPDATE data SET device = device & ~{device_id} WHERE timestamp >= {ts_from} AND timestamp <= {ts_to};")
+                
                 conn.close()
             else:
                 with urlopen(f"{self.config('myhost')}/update/{device_id}/{ts_from}/{ts_to}/0") as response :
@@ -134,14 +136,26 @@ class ClassPowerAIDataHandler() :
                 self.event_list[key][i]['device']       = np.delete(self.event_list[key][i]['device'],      delete_list.astype(int))
    
     
-    def print_events(self) :
+    def print_events(self, device_id=0, event_id=0) :
 
-        for key in self.device_list :
+        if (device_id > 0):
+            #reduce lists to specified event
+            device_list_local = {device_id: [self.device_list[device_id]['name']]}
+            if (event_id > 0):
+                event_list_local  = {device_id: [self.event_list[device_id][event_id-1]]}
+            else:
+                event_list_local  = self.event_list
+        else:
+            #keep full lists to print all
+            device_list_local = self.device_list
+            event_list_local  = self.event_list
+
+        for key in device_list_local:
             
-            for i in range(len(self.event_list[key])) :
+            for i in range(len(event_list_local[key])) :
                 
                 x = pd.to_datetime(self.event_list[key][i]['timestamp'], utc=True, unit='ms')
-                y = np.array(self.event_list[key][i]['value']).astype(float)
+                y = np.array(self.event_list[key][i]['value'])
                 
                 for ii in range(1) :
                     
@@ -162,36 +176,74 @@ class ClassPowerAIDataHandler() :
                     x = x[20:40]
                     y = y[20:40]
 
-                    #add fft
-                    #https://pythonnumericalmethods.studentorg.berkeley.edu/notebooks/chapter24.04-FFT-in-Python.html
+
+    def draw_event_fft(self, device_id, event_id):
+        #https://pythonnumericalmethods.studentorg.berkeley.edu/notebooks/chapter24.04-FFT-in-Python.html    
+        # sampling rate
+        sr = 1.0
+        # sampling interval
+        ts = 1.0/sr        
+        x = self.event_list[device_id][event_id-1]['value']
+        #x = np.append(x, np.flip(x)) #adding flipped event should reduce high amplitudes at edges 
+        X = fft(x)
+        #cut = 500
+        #X[-cut:cut] = 0
+        N = len(X)
+        n = np.arange(N)
+        T = N/sr
+        freq = n/T 
+        t = np.arange(0, len(x), ts)
+
+        plt.figure(figsize = (12, 6))
+        plt.subplot(121)
+
+        plt.stem(freq, np.abs(X), 'b', \
+                markerfmt=" ", basefmt="-b")
+        plt.xlabel('Freq (Hz)')
+        plt.ylabel('FFT Amplitude |X(freq)|')
+        plt.xlim(0, 1)
+
+        plt.subplot(122)
+        plt.plot(t, ifft(X), 'r')
+        plt.xlabel('Time (s)')
+        plt.ylabel('Amplitude')
+        plt.tight_layout()
+        plt.show()
+    
 
     def generate_training_data_from_events(self, window_length, event_ratio) :
+        #class vars
+        self.train_ids = {'device_id' : np.array([]), 'event_id' : np.array([])}
+        self.test_ids = {'device_id' : np.array([]), 'event_id' : np.array([])}
 
+        #local vars
         train_x = np.array([])
         train_y = np.array([])
         test_x  = np.array([])
         test_y  = np.array([])
-
+        
         for key in self.device_list :
             # storage for values for current active device
             train_events_values = np.array([])
             test_events_values  = np.array([])
-            test_events_devices = np.array([])
-
-            num_train_events = int(event_ratio * len(self.event_list[key])) 
+            
+            num_train_events = round(event_ratio * len(self.event_list[key])) 
             num_test_events  = len(self.event_list[key]) - num_train_events
 
-            #print("len(self.event_list[key])", len(self.event_list[key]))
-            #print("num_train_events:", num_train_events)
-            #print("num_test_events:", num_test_events)
+            #print(f"len event_list[{key}]): {len(self.event_list[key])}")
+            #print(" num_train_events:", num_train_events)
+            #print(" num_test_events:", num_test_events)
 
             for i in range(len(self.event_list[key])) :
-                if i < num_train_events :        
+                if i <= num_train_events :        
                     train_events_values = np.append(train_events_values, np.array(self.event_list[key][i]['value']).astype(float))
+                    self.train_ids['device_id'] = np.append(self.train_ids['device_id'], int(key))
+                    self.train_ids['device_id'] = np.append(self.train_ids['event_id'], i)
                 else :
                     test_events_values  = np.append(test_events_values,  np.array(self.event_list[key][i]['value']).astype(float))
-                    test_events_devices = np.append(test_events_devices, np.array(self.event_list[key][i]['device']).astype(float))
-            
+                    self.test_ids['device_id'] = np.append(self.test_ids['device_id'], int(key))
+                    self.test_ids['device_id'] = np.append(self.test_ids['event_id'], i)
+                    
             # train values and target list
             #
             # init batch targets for this device
@@ -205,26 +257,48 @@ class ClassPowerAIDataHandler() :
                 train_y = np.append(train_y, batch_target_values)
                 i = i + window_length
             train_x = train_x.reshape((train_x.size // window_length, window_length))
+            train_y = train_y.reshape((train_y.size // len(self.device_list), len(self.device_list)))
             
+            #https://www.tutorialspoint.com/how-to-normalize-a-numpy-array-so-the-values-range-exactly-between-0-and-1
+            for i in range(train_x.shape[0]):
+                
+                # Calculate the mean and standard deviation of the array
+                mean_val = np.mean(train_x[i])
+                std_val = np.std(train_x[i])
+    
+                # Perform z-score normalization
+                train_x[i] = (train_x[i] - mean_val) / std_val
+            
+
             #print("train_y.size", train_y.size)
             #print("len(self.device_list)", len(self.device_list))
-            train_y = train_y.reshape((train_y.size // len(self.device_list), len(self.device_list)))
-
+            
             # test values and target list
             #
             # init batch targets for this device
             #batch_target_values = np.zeros(num_test_events)
-            #!!! batch_target_values[int(np.log2(key))] = 1.
+            #batch_target_values[int(np.log2(key))] = 1.
 
             # generate batches with values and targets
             i = 0 + window_length
             while i < test_events_values.size :
                 test_x = np.append(test_x, test_events_values[i - window_length : i])
-                test_y = np.append(test_y, test_events_devices[i - window_length : i])
+                test_y = np.append(test_y, batch_target_values)
                 i = i + window_length
             test_x = test_x.reshape((test_x.size // window_length, window_length))
-            test_y = test_y.reshape((test_y.size // window_length, window_length))
+            test_y = test_y.reshape((test_y.size // len(self.device_list), len(self.device_list)))
+            
+            #https://www.tutorialspoint.com/how-to-normalize-a-numpy-array-so-the-values-range-exactly-between-0-and-1
+            for i in range(test_x.shape[0]):
+                
+                # Calculate the mean and standard deviation of the array
+                mean_val = np.mean(test_x[i])
+                std_val = np.std(test_x[i])
+    
+                # Perform z-score normalization
+                test_x[i] = (test_x[i] - mean_val) / std_val
 
+        print(f'train_x (batch num, window length): {train_x.shape}\ntrain_y (batch num, device num): {train_y.shape}\ntest_x  (batch num, window length): {test_x.shape}\ntest_y  (batch num, device num): {test_y.shape}')
         return train_x, train_y, test_x, test_y
 
     
@@ -238,33 +312,36 @@ class ClassPowerAIDataHandler() :
                     test_x = np.append(test_x, np.array(self.event_list[key][i]['value']).astype(float))
                     test_y = np.append(test_y, np.array(self.event_list[key][i]['device']).astype(float))
         
-        return test_x, test_y
+        return test_x, test_y, test_t
 
 
     def compare_with_testdata(self, predict_y, test_x, test_y) :
         self.cnt_wrong   = np.zeros(len(self.device_list))
         self.cnt_correct = np.zeros(len(self.device_list))
+        self.test_x_wrong = dict(zip([1,2,4,8,16,32,64,128,256,512,1024,2048], [[],[],[],[],[],[],[],[],[], [],[],[]]))
+        self.test_x_correct = dict(zip([1,2,4,8,16,32,64,128,256,512,1024,2048], [[],[],[],[],[],[],[],[],[], [],[],[]]))
 
         for i in range(test_x.shape[0]) :
             predicted_pos = np.argmax(predict_y[i])
             predicted_device = np.power(2, predicted_pos)
             
             #find frequency of each value
-            test_devices, counts = np.unique(test_y[i], return_counts = True)
-
+            #test_devices, counts = np.unique(test_y[i], return_counts = True)
             #display each value with highest frequency
-            test_devices[counts == counts.max()]
-                
-            #print(predicted_device, test_devices)
+            #test_devices = test_devices[counts == counts.max()]
+
+            test_device_array_pos = np.argwhere(test_y[i] > 0)
+            test_device = int(test_y[i][test_device_array_pos[0]])
             
-            test_device_array_pos = int(np.log2(test_devices[0]))
+            #print(f'pred device: {predicted_device}, real device: {test_device}')
             
-            if predicted_device not in test_devices :  #OKO: fixed potential bug in line 218 ????
+            if predicted_device != test_device :  #OKO: fixed potential bug in line 218 ????
                 self.cnt_wrong[test_device_array_pos] = self.cnt_wrong[test_device_array_pos] + 1
-                #print("predicted: ", predict_y[i], " and trained: ", test_y[i])
-                #if (test_y[i][0] == 4.0) :  plt.plot(test_x[i])
+                self.test_x_wrong[test_device] = np.append(self.test_x_wrong[test_device], test_x[i])
             else :
                 self.cnt_correct[test_device_array_pos] = self.cnt_correct[test_device_array_pos] + 1
+                self.test_x_correct[test_device] = np.append(self.test_x_correct[test_device], test_x[i])
+                
     
         result_table = PrettyTable(['device name', 'total', 'correct', 'wrong', 'percent'], align='r')
     
@@ -274,6 +351,6 @@ class ClassPowerAIDataHandler() :
                 int(self.cnt_wrong[i] + self.cnt_correct[i]),
                 int(self.cnt_correct[i]),
                 int(self.cnt_wrong[i]),
-                str(int(100 * self.cnt_correct[i] / (self.cnt_correct[i] + self.cnt_wrong[i]))) + "%" if self.cnt_correct[i] + self.cnt_wrong[i] != 0 else ""])
+                str(round(100 * self.cnt_correct[i] / (self.cnt_correct[i] + self.cnt_wrong[i]))) + "%" if self.cnt_correct[i] + self.cnt_wrong[i] != 0 else ""])
 
         print(result_table)
