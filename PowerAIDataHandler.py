@@ -238,11 +238,11 @@ class ClassPowerAIDataHandler() :
                 if i <= num_train_events :        
                     train_events_values = np.append(train_events_values, np.array(self.event_list[key][i]['value']).astype(float))
                     self.train_ids['device_id'] = np.append(self.train_ids['device_id'], int(key))
-                    self.train_ids['device_id'] = np.append(self.train_ids['event_id'], i)
+                    self.train_ids['event_id'] = np.append(self.train_ids['event_id'], i)
                 else :
                     test_events_values  = np.append(test_events_values,  np.array(self.event_list[key][i]['value']).astype(float))
                     self.test_ids['device_id'] = np.append(self.test_ids['device_id'], int(key))
-                    self.test_ids['device_id'] = np.append(self.test_ids['event_id'], i)
+                    self.test_ids['event_id'] = np.append(self.test_ids['event_id'], i)
                     
             # train values and target list
             #
