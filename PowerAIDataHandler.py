@@ -3,8 +3,6 @@ from decouple import Config, RepositoryEnv, Csv #https://github.com/HBNetwork/py
 import numpy as np
 from numpy.fft import fft, ifft
 import pymysql
-#import requests
-#import urllib
 from urllib.request import urlopen
 import json
 from datetime import datetime
@@ -16,11 +14,7 @@ from functools import reduce
 from random import random
 from prettytable import PrettyTable
 
-#class example for further code simplification
-#class Person:
-#def __init__(self, name, age):
-#self.name = name
-#self.age = age
+#class definition
 class ClassPowerAIDataHandler() :
     def __init__(self, fname_dotenv) :
 
@@ -244,8 +238,8 @@ class ClassPowerAIDataHandler() :
                     self.test_ids['device_id'] = np.append(self.test_ids['device_id'], int(key))
                     self.test_ids['event_id'] = np.append(self.test_ids['event_id'], i)
                     
-            # train values and target list
-            #
+            ### TRAIN values and target list
+            
             # init batch targets for this device
             batch_target_values = np.zeros(len(self.device_list))
             batch_target_values[int(np.log2(key))] = 1.
@@ -273,12 +267,8 @@ class ClassPowerAIDataHandler() :
             #print("train_y.size", train_y.size)
             #print("len(self.device_list)", len(self.device_list))
             
-            # test values and target list
-            #
-            # init batch targets for this device
-            #batch_target_values = np.zeros(num_test_events)
-            #batch_target_values[int(np.log2(key))] = 1.
-
+            ### TEST values and target list
+            
             # generate batches with values and targets
             i = 0 + window_length
             while i < test_events_values.size :
@@ -314,6 +304,32 @@ class ClassPowerAIDataHandler() :
         
         return test_x, test_y, test_t
 
+    
+    def dh.compare_algo_results(self, test_x, y) :
+        #compare results
+        correct = np.zeros(12) 
+        wrong = np.zeros(12) 
+        nothing = 0
+        total = len(test_x['value']) 
+        for i in range(total): 
+            device_pos = int(np.log2(test_x['device'][i])) 
+            if test_x['device'][i] == y[i]: 
+                correct[device_pos] = correct[device_pos] + 1 
+            else: 
+                wrong[device_pos] = wrong[device_pos] + 1 
+        
+        #print table
+        result_table = PrettyTable(['device name', 'total', 'correct', 'wrong', 'percent'], align='r') 
+        for i in range(len(self.device_list)) : 
+            result_table.add_row([ 
+            self.device_list[np.power(2, i)]['name'], 
+            int(wrong[i] + correct[i]), 
+            int(correct[i]), 
+            int(wrong[i]), 
+            str(round(100 * correct[i] / (correct[i] + wrong[i]))) + "%" if correct[i] + wrong[i] != 0 else ""])
+        
+        print(result_table)
+
 
     def compare_with_testdata(self, predict_y, test_x, test_y) :
         self.cnt_wrong   = np.zeros(len(self.device_list))
@@ -325,11 +341,6 @@ class ClassPowerAIDataHandler() :
             predicted_pos = np.argmax(predict_y[i])
             predicted_device = np.power(2, predicted_pos)
             
-            #find frequency of each value
-            #test_devices, counts = np.unique(test_y[i], return_counts = True)
-            #display each value with highest frequency
-            #test_devices = test_devices[counts == counts.max()]
-
             test_device_array_pos = np.argwhere(test_y[i] > 0)
             test_device = int(test_y[i][test_device_array_pos[0]])
             
