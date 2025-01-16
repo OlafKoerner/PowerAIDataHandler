@@ -353,7 +353,7 @@ class ClassPowerAIDataHandler() :
 
         for i in range(test_x.shape[0]) :
             predicted_pos = np.argmax(predict_y[i])
-            predicted_device = self.device_ids_order(predicted_pos)
+            predicted_device = self.device_ids_order[predicted_pos]
             
             test_device_array_pos = np.argwhere(test_y[i] > 0)
             test_device = int(test_y[i][test_device_array_pos[0]])
