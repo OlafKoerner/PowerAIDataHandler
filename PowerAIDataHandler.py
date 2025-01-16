@@ -229,6 +229,7 @@ class ClassPowerAIDataHandler() :
         for key in self.device_list :
             device_ids = np.append(device_ids, int(key))
         self.device_ids_order = np.sort(device_ids)
+        print(self.device_ids_order)
 
         for key in self.device_list :
             # storage for values for current active device
