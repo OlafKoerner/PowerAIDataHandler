@@ -359,7 +359,7 @@ class ClassPowerAIDataHandler() :
             test_device_array_pos = np.argwhere(test_y[i] > 0)
             test_device = int(test_y[i][test_device_array_pos[0]])
             
-            #print(f'pred device: {predicted_device}, real device: {test_device}')
+            print(f'pred device: {predicted_device}, real device: {test_device}')
             
             if predicted_device != test_device :  #OKO: fixed potential bug in line 218 ????
                 self.cnt_wrong[test_device_array_pos] = self.cnt_wrong[test_device_array_pos] + 1
