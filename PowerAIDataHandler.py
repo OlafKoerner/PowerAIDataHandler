@@ -262,7 +262,7 @@ class ClassPowerAIDataHandler() :
 
             # generate batches with values and targets
             i = 0 + window_length
-            while i < train_events_values.size and i < self.min_device_dps:
+            while i < train_events_values.size and i < self.min_device_dps * event_ratio:
                 train_x = np.append(train_x, train_events_values[i - window_length : i])
                 train_y = np.append(train_y, batch_target_values)
                 i = i + window_length
@@ -287,7 +287,7 @@ class ClassPowerAIDataHandler() :
             
             # generate batches with values and targets
             i = 0 + window_length
-            while i < test_events_values.size and i < self.min_device_dps:
+            while i < test_events_values.size and i < self.min_device_dps * (1 - event_ratio):
                 test_x = np.append(test_x, test_events_values[i - window_length : i])
                 test_y = np.append(test_y, batch_target_values)
                 i = i + window_length
