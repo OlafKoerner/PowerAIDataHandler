@@ -358,7 +358,7 @@ class ClassPowerAIDataHandler() :
             predicted_device = self.device_ids_order[predicted_pos]
             
             test_device_array_pos = np.argwhere(test_y[i] > 0)
-            test_device = int(test_device_array_pos[0])
+            test_device = self.device_ids_order[test_device_array_pos[0]]
             
             print(f'test_device_array_pos: {test_device_array_pos}')
             print(f'test_device: {test_device}')
