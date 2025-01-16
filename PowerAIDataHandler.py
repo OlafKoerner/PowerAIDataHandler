@@ -20,11 +20,11 @@ class ClassPowerAIDataHandler() :
 
         # configuration
         self.device_list = {
-            1: {'name' : 'espresso-machine', 'minpow' : 800},
-            2: {'name' : 'washing-machine', 'minpow' : 500},
-            4: {'name' : 'dish-washer', 'minpow' : 500},
+            #1: {'name' : 'espresso-machine', 'minpow' : 800},
+            #2: {'name' : 'washing-machine', 'minpow' : 500},
+            #4: {'name' : 'dish-washer', 'minpow' : 500},
             #8: {'name' : 'induction-cooker', 'minpow' : 800},
-            16: {'name': 'irrigation-system', 'minpow': 400},
+            #16: {'name': 'irrigation-system', 'minpow': 400},
             32: {'name': 'oven', 'minpow': 800},
             #64: {'name': 'microwave', 'minpow': 800},
             #128: {'name': 'kitchen-light', 'minpow': 200},
