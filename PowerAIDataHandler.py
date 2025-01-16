@@ -223,13 +223,14 @@ class ClassPowerAIDataHandler() :
             for i in range(len(self.event_list[key])) :
                 sum_dps = sum_dps + len(self.event_list[key][i]['timestamp'])
             min_device_dps = min(min_device_dps, sum_dps)
+        print(f'min_device_dps: {min_device_dps}')
 
         #get sorted device ids to determine target pos to set to 1
         device_ids = np.array([])
         for key in self.device_list :
             device_ids = np.append(device_ids, int(key))
         self.device_ids_order = np.sort(device_ids)
-        print(self.device_ids_order)
+        print(f'self.device_ids_order: {self.device_ids_order}')
 
         for key in self.device_list :
             # storage for values for current active device
@@ -359,8 +360,13 @@ class ClassPowerAIDataHandler() :
             test_device_array_pos = np.argwhere(test_y[i] > 0)
             test_device = int(test_device_array_pos[0])
             
-            print(f'pred device: {predicted_device}, real device: {test_device}')
+            print(f'test_device_array_pos: {test_device_array_pos}')
+            print(f'test_device: {test_device}')
             
+            print(f'predicted_pos: {predicted_pos}')
+            print(f'self.device_ids_order: {self.device_ids_order}')
+            print(f'predicted_device: {predicted_device}
+
             if predicted_device != test_device :  #OKO: fixed potential bug in line 218 ????
                 self.cnt_wrong[test_device_array_pos] = self.cnt_wrong[test_device_array_pos] + 1
                 self.test_x_wrong[test_device] = np.append(self.test_x_wrong[test_device], test_x[i])
