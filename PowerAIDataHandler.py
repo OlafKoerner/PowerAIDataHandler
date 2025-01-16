@@ -358,7 +358,7 @@ class ClassPowerAIDataHandler() :
             predicted_device = self.device_ids_order[predicted_pos]
             
             test_device_array_pos = np.argwhere(test_y[i] > 0)
-            test_device = self.device_ids_order[test_device_array_pos[0]]
+            test_device = int(self.device_ids_order[test_device_array_pos[0]])
             
             print(f'test_device_array_pos: {test_device_array_pos}')
             print(f'test_device: {test_device}')
@@ -369,10 +369,10 @@ class ClassPowerAIDataHandler() :
 
             if predicted_device != test_device :  #OKO: fixed potential bug in line 218 ????
                 self.cnt_wrong[test_device_array_pos] = self.cnt_wrong[test_device_array_pos] + 1
-                self.test_x_wrong[test_device] = np.append(self.test_x_wrong[test_device], test_x[i])
+                #self.test_x_wrong[test_device] = np.append(self.test_x_wrong[test_device], test_x[i])
             else :
                 self.cnt_correct[test_device_array_pos] = self.cnt_correct[test_device_array_pos] + 1
-                self.test_x_correct[test_device] = np.append(self.test_x_correct[test_device], test_x[i])
+                #self.test_x_correct[test_device] = np.append(self.test_x_correct[test_device], test_x[i])
                 
     
         result_table = PrettyTable(['device name', 'total', 'correct', 'wrong', 'percent'], align='r')
