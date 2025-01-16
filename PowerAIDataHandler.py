@@ -216,6 +216,12 @@ class ClassPowerAIDataHandler() :
         test_x  = np.array([])
         test_y  = np.array([])
         
+        #get sorted device ids to determine target pos to set to 1
+        device_ids = np.array([])
+        for key in self.device_list :
+            device_ids = np.append(device_ids, int(key))
+        device_ids_order = np.sort(device_ids)
+
         for key in self.device_list :
             # storage for values for current active device
             train_events_values = np.array([])
@@ -242,7 +248,7 @@ class ClassPowerAIDataHandler() :
             
             # init batch targets for this device
             batch_target_values = np.zeros(len(self.device_list))
-            batch_target_values[int(np.log2(key))] = 1.
+            batch_target_values[np.argwhere(device_ids_order == int(key))] = 1.
 
             # generate batches with values and targets
             i = 0 + window_length
