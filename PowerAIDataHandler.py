@@ -368,10 +368,10 @@ class ClassPowerAIDataHandler() :
             #print(f'test_device: {test_device}')
 
             if predicted_device != test_device :  #OKO: fixed potential bug in line 218 ????
-                self.cnt_wrong[test_device_array_pos] = self.cnt_wrong[test_device_array_pos] + 1
+                self.cnt_wrong[test_device_array_pos[0]] = self.cnt_wrong[test_device_array_pos[0]] + 1
                 self.test_x_wrong[test_device] = np.append(self.test_x_wrong[test_device], test_x[i])
             else :
-                self.cnt_correct[test_device_array_pos] = self.cnt_correct[test_device_array_pos] + 1
+                self.cnt_correct[test_device_array_pos[0]] = self.cnt_correct[test_device_array_pos[0]] + 1
                 self.test_x_correct[test_device] = np.append(self.test_x_correct[test_device], test_x[i])
                 
     
