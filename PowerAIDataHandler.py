@@ -217,7 +217,7 @@ class ClassPowerAIDataHandler() :
         test_y  = np.array([])
         
         #determine minimal amount of datapoints for all devices to balance
-        self.min_device_dps = 10000000000
+        self.min_device_dps = 90
         for key in self.device_list :
             sum_dps = 0
             for i in range(len(self.event_list[key])) :
