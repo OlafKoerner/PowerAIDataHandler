@@ -23,15 +23,15 @@ class ClassPowerAIDataHandler() :
             1: {'name' : 'espresso-machine', 'minpow' : 800},
             2: {'name' : 'washing-machine', 'minpow' : 500},
             4: {'name' : 'dish-washer', 'minpow' : 500},
-            8: {'name' : 'induction-cooker', 'minpow' : 800},
+            #8: {'name' : 'induction-cooker', 'minpow' : 800},
             16: {'name': 'irrigation-system', 'minpow': 400},
             32: {'name': 'oven', 'minpow': 800},
-            64: {'name': 'microwave', 'minpow': 800},
-            128: {'name': 'kitchen-light', 'minpow': 200},
-            256: {'name': 'living-room-light', 'minpow': 200},
+            #64: {'name': 'microwave', 'minpow': 800},
+            #128: {'name': 'kitchen-light', 'minpow': 200},
+            #256: {'name': 'living-room-light', 'minpow': 200},
             512: {'name': 'dining-room-light', 'minpow': 200},
-            1024: {'name': 'ground-floor-light', 'minpow': 200},
-            2048: {'name': 'upper-floor-light', 'minpow': 200},
+            #1024: {'name': 'ground-floor-light', 'minpow': 200},
+            #2048: {'name': 'upper-floor-light', 'minpow': 200},
         }
 
         #setup connection to mysql database
