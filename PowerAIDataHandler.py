@@ -216,11 +216,19 @@ class ClassPowerAIDataHandler() :
         test_x  = np.array([])
         test_y  = np.array([])
         
+        #determine minimal amount of datapoints for all devices to balance
+        min_device_dps = 10000000000
+        for key in self.device_list :
+            sum_dps = 0
+            for i in range(len(self.event_list[key])) :
+                sum_dps = sum_dps + self.event_list[key][i]['timestamp'].shape[0]
+            min_device_dps = min(min_device_dps, sum_dps)
+
         #get sorted device ids to determine target pos to set to 1
         device_ids = np.array([])
         for key in self.device_list :
             device_ids = np.append(device_ids, int(key))
-        device_ids_order = np.sort(device_ids)
+        self.device_ids_order = np.sort(device_ids)
 
         for key in self.device_list :
             # storage for values for current active device
@@ -248,7 +256,7 @@ class ClassPowerAIDataHandler() :
             
             # init batch targets for this device
             batch_target_values = np.zeros(len(self.device_list))
-            batch_target_values[np.argwhere(device_ids_order == int(key))] = 1.
+            batch_target_values[np.argwhere(self.device_ids_order == int(key))] = 1.
 
             # generate batches with values and targets
             i = 0 + window_length
@@ -364,7 +372,7 @@ class ClassPowerAIDataHandler() :
     
         for i in range(len(self.device_list)) :
             result_table.add_row([
-                self.device_list[np.power(2, i)]['name'], 
+                self.device_list[self.device_ids_order[i]]['name'], 
                 int(self.cnt_wrong[i] + self.cnt_correct[i]),
                 int(self.cnt_correct[i]),
                 int(self.cnt_wrong[i]),
