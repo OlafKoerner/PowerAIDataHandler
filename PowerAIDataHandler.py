@@ -221,7 +221,7 @@ class ClassPowerAIDataHandler() :
         for key in self.device_list :
             sum_dps = 0
             for i in range(len(self.event_list[key])) :
-                sum_dps = sum_dps + self.event_list[key][i]['timestamp'].shape[0]
+                sum_dps = sum_dps + len(self.event_list[key][i]['timestamp'])
             min_device_dps = min(min_device_dps, sum_dps)
 
         #get sorted device ids to determine target pos to set to 1
