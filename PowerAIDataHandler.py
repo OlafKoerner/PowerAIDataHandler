@@ -305,7 +305,7 @@ class ClassPowerAIDataHandler() :
         return test_x, test_y, test_t
 
     
-    def dh.compare_algo_results(self, test_x, y) :
+    def compare_algo_results(self, test_x, y) :
         #compare results
         correct = np.zeros(12) 
         wrong = np.zeros(12) 
