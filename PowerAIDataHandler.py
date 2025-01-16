@@ -217,13 +217,13 @@ class ClassPowerAIDataHandler() :
         test_y  = np.array([])
         
         #determine minimal amount of datapoints for all devices to balance
-        min_device_dps = 10000000000
+        self.min_device_dps = 10000000000
         for key in self.device_list :
             sum_dps = 0
             for i in range(len(self.event_list[key])) :
                 sum_dps = sum_dps + len(self.event_list[key][i]['timestamp'])
-            min_device_dps = min(min_device_dps, sum_dps)
-        print(f'min_device_dps: {min_device_dps}')
+            self.min_device_dps = min(self.min_device_dps, sum_dps)
+        print(f'self.min_device_dps: {self.min_device_dps}')
 
         #get sorted device ids to determine target pos to set to 1
         device_ids = np.array([])
@@ -262,7 +262,7 @@ class ClassPowerAIDataHandler() :
 
             # generate batches with values and targets
             i = 0 + window_length
-            while i < train_events_values.size :
+            while i < train_events_values.size and i < self.min_device_dps:
                 train_x = np.append(train_x, train_events_values[i - window_length : i])
                 train_y = np.append(train_y, batch_target_values)
                 i = i + window_length
@@ -287,7 +287,7 @@ class ClassPowerAIDataHandler() :
             
             # generate batches with values and targets
             i = 0 + window_length
-            while i < test_events_values.size :
+            while i < test_events_values.size and i < self.min_device_dps:
                 test_x = np.append(test_x, test_events_values[i - window_length : i])
                 test_y = np.append(test_y, batch_target_values)
                 i = i + window_length
