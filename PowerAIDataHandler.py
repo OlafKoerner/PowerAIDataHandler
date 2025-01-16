@@ -365,7 +365,7 @@ class ClassPowerAIDataHandler() :
             
             print(f'predicted_pos: {predicted_pos}')
             print(f'self.device_ids_order: {self.device_ids_order}')
-            print(f'predicted_device: {predicted_device}
+            print(f'predicted_device: {predicted_device}')
 
             if predicted_device != test_device :  #OKO: fixed potential bug in line 218 ????
                 self.cnt_wrong[test_device_array_pos] = self.cnt_wrong[test_device_array_pos] + 1
