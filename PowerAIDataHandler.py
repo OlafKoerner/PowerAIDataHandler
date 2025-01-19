@@ -19,17 +19,18 @@ class ClassPowerAIDataHandler() :
     def __init__(self, fname_dotenv) :
 
         # configuration
+        # minpow means consumption only by the device
         self.device_list = {
-            #1: {'name' : 'espresso-machine', 'minpow' : 800},
-            #2: {'name' : 'washing-machine', 'minpow' : 500},
-            #4: {'name' : 'dish-washer', 'minpow' : 500},
-            #8: {'name' : 'induction-cooker', 'minpow' : 800},
-            #16: {'name': 'irrigation-system', 'minpow': 400},
-            32: {'name': 'oven', 'minpow': 800},
+            #1: {'name' : 'espresso-machine', 'minpow' : 900},
+            #2: {'name' : 'washing-machine', 'minpow' : 250},
+            #4: {'name' : 'dish-washer', 'minpow' : 2000},
+            #8: {'name' : 'induction-cooker', 'minpow' : 500},
+            #16: {'name': 'irrigation-system', 'minpow': 750},
+            32: {'name': 'oven', 'minpow': 1000},
             #64: {'name': 'microwave', 'minpow': 800},
             #128: {'name': 'kitchen-light', 'minpow': 200},
             #256: {'name': 'living-room-light', 'minpow': 200},
-            512: {'name': 'dining-room-light', 'minpow': 200},
+            512: {'name': 'dining-room-light', 'minpow': 0},
             #1024: {'name': 'ground-floor-light', 'minpow': 200},
             #2048: {'name': 'upper-floor-light', 'minpow': 200},
         }
