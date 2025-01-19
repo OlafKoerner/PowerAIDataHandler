@@ -20,6 +20,7 @@ class ClassPowerAIDataHandler() :
 
         # configuration
         # minpow means consumption only by the device
+        self.base_pow = 200
         self.device_list = {
             #1: {'name' : 'espresso-machine', 'minpow' : 900},
             #2: {'name' : 'washing-machine', 'minpow' : 250},
@@ -29,13 +30,11 @@ class ClassPowerAIDataHandler() :
             32: {'name': 'oven', 'minpow': 1000},
             #64: {'name': 'microwave', 'minpow': 800},
             #128: {'name': 'kitchen-light', 'minpow': 250},
-            #256: {'name': 'living-room-light', 'minpow': 50}, # OKO for base load
+            256: {'name': 'living-room-light', 'minpow': -self.base_pow}, # OKO for base load
             #512: {'name': 'dining-room-light', 'minpow': 0}, #OKO data looks strange ...
             #1024: {'name': 'ground-floor-light', 'minpow': 400},
             #2048: {'name': 'upper-floor-light', 'minpow': 180},
         }
-
-        self.base_pow = 200
 
         #setup connection to mysql database
         self.config = Config(RepositoryEnv(fname_dotenv))
