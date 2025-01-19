@@ -25,7 +25,7 @@ class ClassPowerAIDataHandler() :
             1: {'name' : 'espresso-machine', 'minpow' : 900},
             2: {'name' : 'washing-machine', 'minpow' : 250},
             4: {'name' : 'dish-washer', 'minpow' : 2000},
-            8: {'name' : 'induction-cooker', 'minpow' : 500},
+            #8: {'name' : 'induction-cooker', 'minpow' : 500},
             16: {'name': 'irrigation-system', 'minpow': 750},
             32: {'name': 'oven', 'minpow': 1000},
             #64: {'name': 'microwave', 'minpow': 800},
