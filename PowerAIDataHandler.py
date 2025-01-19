@@ -357,24 +357,26 @@ class ClassPowerAIDataHandler() :
 
         for i in range(test_x.shape[0]) :
             predicted_pos = np.argmax(predict_y[i])
-            predicted_device = self.device_ids_order[predicted_pos]
+            #predicted_device = self.device_ids_order[predicted_pos]
             
             #print(f'predicted_pos: {predicted_pos}')
             #print(f'self.device_ids_order: {self.device_ids_order}')
             #print(f'predicted_device: {predicted_device}')
 
-            test_device_array_pos = np.argwhere(test_y[i] > 0)
-            test_device = int(self.device_ids_order[test_device_array_pos[0]])
+            #test_device_array_pos = np.argwhere(test_y[i] > 0)
+            test_device_array_pos = np.argmax(test_y[i])
+            #test_device = int(self.device_ids_order[test_device_array_pos[0]])
             
             #print(f'test_device_array_pos: {test_device_array_pos}')
             #print(f'test_device: {test_device}')
 
-            if predicted_device != test_device :  #OKO: fixed potential bug in line 218 ????
-                self.cnt_wrong[test_device_array_pos[0]] = self.cnt_wrong[test_device_array_pos[0]] + 1
-                self.test_x_wrong[test_device] = np.append(self.test_x_wrong[test_device], test_x[i])
+            #if predicted_device != test_device :  #OKO: fixed potential bug in line 218 ????
+            if predicted_pos != test_device_array_pos :  #OKO: fixed potential bug in line 218 ????
+                self.cnt_wrong[test_device_array_pos] = self.cnt_wrong[test_device_array_pos] + 1
+                #self.test_x_wrong[test_device] = np.append(self.test_x_wrong[test_device], test_x[i])
             else :
-                self.cnt_correct[test_device_array_pos[0]] = self.cnt_correct[test_device_array_pos[0]] + 1
-                self.test_x_correct[test_device] = np.append(self.test_x_correct[test_device], test_x[i])
+                self.cnt_correct[test_device_array_pos] = self.cnt_correct[test_device_array_pos] + 1
+                #self.test_x_correct[test_device] = np.append(self.test_x_correct[test_device], test_x[i])
                 
     
         result_table = PrettyTable(['device name', 'total', 'correct', 'wrong', 'percent'], align='r')
