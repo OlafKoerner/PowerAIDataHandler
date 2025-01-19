@@ -23,7 +23,7 @@ class ClassPowerAIDataHandler() :
         self.base_pow = 200
         self.device_list = {
             1: {'name' : 'espresso-machine', 'minpow' : 900},
-            2: {'name' : 'washing-machine', 'minpow' : 250},
+            #2: {'name' : 'washing-machine', 'minpow' : 250},
             #4: {'name' : 'dish-washer', 'minpow' : 2000},
             #8: {'name' : 'induction-cooker', 'minpow' : 500},
             #16: {'name': 'irrigation-system', 'minpow': 750},
