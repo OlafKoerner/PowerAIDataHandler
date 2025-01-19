@@ -29,8 +29,8 @@ class ClassPowerAIDataHandler() :
             32: {'name': 'oven', 'minpow': 1000},
             #64: {'name': 'microwave', 'minpow': 800},
             #128: {'name': 'kitchen-light', 'minpow': 250},
-            #256: {'name': 'living-room-light', 'minpow': 50},
-            512: {'name': 'dining-room-light', 'minpow': 0},
+            #256: {'name': 'living-room-light', 'minpow': 50}, # OKO for base load
+            #512: {'name': 'dining-room-light', 'minpow': 0}, #OKO data looks strange ...
             #1024: {'name': 'ground-floor-light', 'minpow': 400},
             #2048: {'name': 'upper-floor-light', 'minpow': 180},
         }
