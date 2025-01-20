@@ -224,6 +224,7 @@ class ClassPowerAIDataHandler() :
             sum_dps = 0
             for i in range(len(self.event_list[key])) :
                 sum_dps = sum_dps + len(self.event_list[key][i]['timestamp'])
+            print(f'available data points for {key} ({self.device_list[key]['name']}): {sum_dps}')
             self.min_device_dps = min(self.min_device_dps, sum_dps)
         print(f'self.min_device_dps: {self.min_device_dps}')
 
