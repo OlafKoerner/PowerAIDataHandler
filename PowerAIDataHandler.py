@@ -119,10 +119,10 @@ class ClassPowerAIDataHandler() :
                 delete_list = np.array([])
                 
                 for t in range(len(self.event_list[key][i]['value'])) :  
-                    if  self.event_list[key][i]['value'][t] < self.base_pow + self.device_list[key]['minpow'] or
-                        self.event_list[key][i]['value'][t] > self.base_pow + self.device_list[key]['maxpow']:
-                        delete_mode = True
-                        delete_list = np.append(delete_list, t)
+                    if (self.event_list[key][i]['value'][t] < self.base_pow + self.device_list[key]['minpow'] or 
+                        self.event_list[key][i]['value'][t] > self.base_pow + self.device_list[key]['maxpow']):
+                            delete_mode = True
+                            delete_list = np.append(delete_list, t)
                     else :
                         if delete_mode :
                             delete_list = np.delete(delete_list, -1)
