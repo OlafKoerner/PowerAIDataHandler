@@ -272,14 +272,14 @@ class ClassPowerAIDataHandler() :
             train_y = train_y.reshape((train_y.size // len(self.device_list), len(self.device_list)))
             
             #https://www.tutorialspoint.com/how-to-normalize-a-numpy-array-so-the-values-range-exactly-between-0-and-1
-            for i in range(train_x.shape[0]):
+            #for i in range(train_x.shape[0]):
                 
                 # Calculate the mean and standard deviation of the array
-                mean_val = np.mean(train_x[i])
-                std_val = np.std(train_x[i])
+                #mean_val = np.mean(train_x[i])
+                #std_val = np.std(train_x[i])
     
                 # Perform z-score normalization
-                train_x[i] = (train_x[i] - mean_val) / std_val
+                #train_x[i] = (train_x[i] - mean_val) / std_val
             
 
             #print("train_y.size", train_y.size)
@@ -297,14 +297,14 @@ class ClassPowerAIDataHandler() :
             test_y = test_y.reshape((test_y.size // len(self.device_list), len(self.device_list)))
             
             #https://www.tutorialspoint.com/how-to-normalize-a-numpy-array-so-the-values-range-exactly-between-0-and-1
-            for i in range(test_x.shape[0]):
+            #for i in range(test_x.shape[0]):
                 
                 # Calculate the mean and standard deviation of the array
-                mean_val = np.mean(test_x[i])
-                std_val = np.std(test_x[i])
+                #mean_val = np.mean(test_x[i])
+                #std_val = np.std(test_x[i])
     
                 # Perform z-score normalization
-                test_x[i] = (test_x[i] - mean_val) / std_val
+                #test_x[i] = (test_x[i] - mean_val) / std_val
 
         print(f'train_x (batch num, window length): {train_x.shape}\ntrain_y (batch num, device num): {train_y.shape}\ntest_x  (batch num, window length): {test_x.shape}\ntest_y  (batch num, device num): {test_y.shape}')
         return train_x, train_y, test_x, test_y
