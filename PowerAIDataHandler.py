@@ -23,17 +23,17 @@ class ClassPowerAIDataHandler() :
         self.base_pow = 200
         self.device_list = {
             1: {'name' : 'espresso-machine', 'minpow' : 800},
-            #2: {'name' : 'washing-machine', 'minpow' : 250},
-            #4: {'name' : 'dish-washer', 'minpow' : 2000},
-            #8: {'name' : 'induction-cooker', 'minpow' : 500},
-            #16: {'name': 'irrigation-system', 'minpow': 750},
+            2: {'name' : 'washing-machine', 'minpow' : 250},
+            4: {'name' : 'dish-washer', 'minpow' : 2000},
+            8: {'name' : 'induction-cooker', 'minpow' : 500},
+            16: {'name': 'irrigation-system', 'minpow': 750},
             32: {'name': 'oven', 'minpow': 1000},
-            #64: {'name': 'microwave', 'minpow': 800},
-            #128: {'name': 'kitchen-light', 'minpow': 250},
+            64: {'name': 'microwave', 'minpow': 800},
+            128: {'name': 'kitchen-light', 'minpow': 250},
             256: {'name': 'living-room-light', 'minpow': -self.base_pow}, # OKO for base load
-            #512: {'name': 'dining-room-light', 'minpow': 0}, #OKO data looks strange ...
-            #1024: {'name': 'ground-floor-light', 'minpow': 400},
-            #2048: {'name': 'upper-floor-light', 'minpow': 180},
+            512: {'name': 'dining-room-light', 'minpow': 0}, #OKO data looks strange ...
+            1024: {'name': 'ground-floor-light', 'minpow': 400},
+            2048: {'name': 'upper-floor-light', 'minpow': 180},
         }
 
         #setup connection to mysql database
@@ -224,7 +224,7 @@ class ClassPowerAIDataHandler() :
             sum_dps = 0
             for i in range(len(self.event_list[key])) :
                 sum_dps = sum_dps + len(self.event_list[key][i]['timestamp'])
-            print(f'available data points for {key} ({self.device_list[key]['name']}): {sum_dps}')
+            print(f"available data points for {key} ({self.device_list[key]['name']}): {sum_dps}")
             self.min_device_dps = min(self.min_device_dps, sum_dps)
         print(f'self.min_device_dps: {self.min_device_dps}')
 
