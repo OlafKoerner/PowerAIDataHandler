@@ -22,16 +22,16 @@ class ClassPowerAIDataHandler() :
         # minpow means consumption only by the device
         self.base_pow = 200
         self.device_list = {
-            1: {'name' : 'espresso-machine', 'minpow' : 800},
-            2: {'name' : 'washing-machine', 'minpow' : 0},
-            #4: {'name' : 'dish-washer', 'minpow' : 1900},
-            #8: {'name' : 'induction-cooker', 'minpow' : 500},
-            16: {'name': 'irrigation-system', 'minpow': 750},
-            32: {'name': 'oven', 'minpow': 900},
-            #64: {'name': 'microwave', 'minpow': 800},
+            1: {'name' : 'espresso-machine', 'minpow' : 800, 'maxpow' : 1500, },
+            2: {'name' : 'washing-machine', 'minpow' : 0, 'maxpow': 3000},
+            #4: {'name' : 'dish-washer', 'minpow' : 1900, 'maxpow': 2600},
+            #8: {'name' : 'induction-cooker', 'minpow' : 500, 'maxpow': 3500},
+            16: {'name': 'irrigation-system', 'minpow': 800, 'maxpow': 1500},
+            32: {'name': 'oven', 'minpow': 900, 'maxpow': 5500},
+            #64: {'name': 'microwave', 'minpow': 800, 'maxpow': 1500},
             #128: {'name': 'kitchen-light', 'minpow': 250},
-            256: {'name': 'living-room-light', 'minpow': -self.base_pow}, # OKO for base load
-            512: {'name': 'dining-room-light', 'minpow': 0}, #OKO data looks strange ...
+            256: {'name': 'living-room-light', 'minpow': -self.base_pow, 'maxpow': 400}, # OKO for base load
+            #512: {'name': 'dining-room-light', 'minpow': 0, 'maxpow': 400}, #OKO data looks strange ...
             #1024: {'name': 'ground-floor-light', 'minpow': 400},
             #2048: {'name': 'upper-floor-light', 'minpow': 180},
         }
@@ -119,7 +119,8 @@ class ClassPowerAIDataHandler() :
                 delete_list = np.array([])
                 
                 for t in range(len(self.event_list[key][i]['value'])) :  
-                    if self.event_list[key][i]['value'][t] < self.base_pow + self.device_list[key]['minpow'] :
+                    if  self.event_list[key][i]['value'][t] < self.base_pow + self.device_list[key]['minpow'] or
+                        self.event_list[key][i]['value'][t] > self.base_pow + self.device_list[key]['maxpow']:
                         delete_mode = True
                         delete_list = np.append(delete_list, t)
                     else :
