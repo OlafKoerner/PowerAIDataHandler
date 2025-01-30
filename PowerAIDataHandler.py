@@ -380,7 +380,7 @@ class ClassPowerAIDataHandler() :
             counts[key] = dict([(key, 0) for key in self.device_list.keys()])
 
         for i in range(predict_y.shape[0]):
-            counts[self.device_ids_order[np.argmax(train_y[i])]][self.device_ids_order[np.argmax(predict_y[i])]] = counts[self.device_ids_order[np.argmax(train_y[i])]][self.device_ids_order[np.argmax(predict_y[i])]] + 1
+            counts[self.device_ids_order[np.argmax(test_y[i])]][self.device_ids_order[np.argmax(predict_y[i])]] = counts[self.device_ids_order[np.argmax(test_y[i])]][self.device_ids_order[np.argmax(predict_y[i])]] + 1
 
             result_table = PrettyTable(range(len(self.device_list)+1), align='r')
             
