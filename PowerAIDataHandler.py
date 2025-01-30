@@ -208,8 +208,9 @@ class ClassPowerAIDataHandler() :
         plt.show()
     
 
-    def generate_training_data_from_events(self, window_length, event_ratio) :
+    def generate_training_data_from_events(self, window_length_max, event_ratio) :
         #class vars
+        self.window_length = 0
         self.train_ids = {'device_id' : np.array([]), 'event_id' : np.array([])}
         self.test_ids = {'device_id' : np.array([]), 'event_id' : np.array([])}
 
@@ -219,6 +220,14 @@ class ClassPowerAIDataHandler() :
         test_x  = np.array([])
         test_y  = np.array([])
         
+        #determine window length
+        min_event_length = window_length_max
+        for key in dh.event_list:
+            for i in range(len(dh.event_list[key])):
+                min_event_length = min(min_event_length, len(dh.event_list[key][i]['timestamp']))
+        self.window_length = min(min_event_length, window_length_max)
+        print(f'chosen window_length: {self.window_length}')
+
         #determine minimal amount of datapoints for all devices to balance
         self.min_device_dps = 1000000000
         for key in self.device_list :
@@ -265,12 +274,18 @@ class ClassPowerAIDataHandler() :
             batch_target_values[np.argwhere(self.device_ids_order == int(key))] = 1.
 
             # generate batches with values and targets
+<<<<<<< HEAD
+            i = 0 + self.window_length
+            while i < train_events_values.size :
+                train_x = np.append(train_x, train_events_values[i - self.window_length : i])
+=======
             i = 0 + window_length
             while i < train_events_values.size and i < self.min_device_dps * event_ratio:
                 train_x = np.append(train_x, train_events_values[i - window_length : i])
+>>>>>>> c14f1aced3377bf0989a9bdc82a38d1a2737c770
                 train_y = np.append(train_y, batch_target_values)
-                i = i + window_length
-            train_x = train_x.reshape((train_x.size // window_length, window_length))
+                i = i + self.window_length
+            train_x = train_x.reshape((train_x.size // self.window_length, self.window_length))
             train_y = train_y.reshape((train_y.size // len(self.device_list), len(self.device_list)))
             
             #https://www.tutorialspoint.com/how-to-normalize-a-numpy-array-so-the-values-range-exactly-between-0-and-1
@@ -283,19 +298,21 @@ class ClassPowerAIDataHandler() :
                 # Perform z-score normalization
                 #train_x[i] = (train_x[i] - mean_val) / std_val
             
-
-            #print("train_y.size", train_y.size)
-            #print("len(self.device_list)", len(self.device_list))
-            
             ### TEST values and target list
             
             # generate batches with values and targets
+<<<<<<< HEAD
+            i = 0 + self.window_length
+            while i < test_events_values.size :
+                test_x = np.append(test_x, test_events_values[i - self.window_length : i])
+=======
             i = 0 + window_length
             while i < test_events_values.size and i < self.min_device_dps * (1 - event_ratio):
                 test_x = np.append(test_x, test_events_values[i - window_length : i])
+>>>>>>> c14f1aced3377bf0989a9bdc82a38d1a2737c770
                 test_y = np.append(test_y, batch_target_values)
                 i = i + window_length
-            test_x = test_x.reshape((test_x.size // window_length, window_length))
+            test_x = test_x.reshape((test_x.size // self.window_length, self.window_length))
             test_y = test_y.reshape((test_y.size // len(self.device_list), len(self.device_list)))
             
             #https://www.tutorialspoint.com/how-to-normalize-a-numpy-array-so-the-values-range-exactly-between-0-and-1
