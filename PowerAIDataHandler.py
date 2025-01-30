@@ -274,57 +274,37 @@ class ClassPowerAIDataHandler() :
             batch_target_values[np.argwhere(self.device_ids_order == int(key))] = 1.
 
             # generate batches with values and targets
-<<<<<<< HEAD
             i = 0 + self.window_length
             while i < train_events_values.size :
                 train_x = np.append(train_x, train_events_values[i - self.window_length : i])
-=======
-            i = 0 + window_length
-            while i < train_events_values.size and i < self.min_device_dps * event_ratio:
-                train_x = np.append(train_x, train_events_values[i - window_length : i])
->>>>>>> c14f1aced3377bf0989a9bdc82a38d1a2737c770
                 train_y = np.append(train_y, batch_target_values)
                 i = i + self.window_length
             train_x = train_x.reshape((train_x.size // self.window_length, self.window_length))
             train_y = train_y.reshape((train_y.size // len(self.device_list), len(self.device_list)))
             
-            #https://www.tutorialspoint.com/how-to-normalize-a-numpy-array-so-the-values-range-exactly-between-0-and-1
-            #for i in range(train_x.shape[0]):
-                
-                # Calculate the mean and standard deviation of the array
-                #mean_val = np.mean(train_x[i])
-                #std_val = np.std(train_x[i])
-    
-                # Perform z-score normalization
-                #train_x[i] = (train_x[i] - mean_val) / std_val
-            
             ### TEST values and target list
             
             # generate batches with values and targets
-<<<<<<< HEAD
             i = 0 + self.window_length
             while i < test_events_values.size :
                 test_x = np.append(test_x, test_events_values[i - self.window_length : i])
-=======
-            i = 0 + window_length
-            while i < test_events_values.size and i < self.min_device_dps * (1 - event_ratio):
-                test_x = np.append(test_x, test_events_values[i - window_length : i])
->>>>>>> c14f1aced3377bf0989a9bdc82a38d1a2737c770
                 test_y = np.append(test_y, batch_target_values)
                 i = i + window_length
             test_x = test_x.reshape((test_x.size // self.window_length, self.window_length))
             test_y = test_y.reshape((test_y.size // len(self.device_list), len(self.device_list)))
-            
-            #https://www.tutorialspoint.com/how-to-normalize-a-numpy-array-so-the-values-range-exactly-between-0-and-1
-            #for i in range(test_x.shape[0]):
-                
-                # Calculate the mean and standard deviation of the array
-                #mean_val = np.mean(test_x[i])
-                #std_val = np.std(test_x[i])
-    
-                # Perform z-score normalization
-                #test_x[i] = (test_x[i] - mean_val) / std_val
 
+        # Calculate the mean and standard deviation of the array
+        mean_val = np.mean(train_x)
+        std_val = np.std(train_x)
+        # Perform z-score normalization
+        train_x = (train_x - mean_val) / std_val
+        print(f'z-normalization gives mean = {np.mean(train_x)} and std = {np.std(train_x)}')
+        
+        # randomization of batches
+        idx = np.random.permutation(len(train_x))
+        train_x = train_x[idx]
+        train_y = train_y[idx]
+        print(f'randomized batches')
         print(f'train_x (batch num, window length): {train_x.shape}\ntrain_y (batch num, device num): {train_y.shape}\ntest_x  (batch num, window length): {test_x.shape}\ntest_y  (batch num, device num): {test_y.shape}')
         return train_x, train_y, test_x, test_y
 
