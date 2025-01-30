@@ -222,9 +222,9 @@ class ClassPowerAIDataHandler() :
         
         #determine window length
         min_event_length = window_length_max
-        for key in dh.event_list:
-            for i in range(len(dh.event_list[key])):
-                min_event_length = min(min_event_length, len(dh.event_list[key][i]['timestamp']))
+        for key in self.event_list:
+            for i in range(len(self.event_list[key])):
+                min_event_length = min(min_event_length, len(self.event_list[key][i]['timestamp']))
         self.window_length = min(min_event_length, window_length_max)
         print(f'chosen window_length: {self.window_length}')
 
@@ -252,10 +252,6 @@ class ClassPowerAIDataHandler() :
             
             num_train_events = round(event_ratio * len(self.event_list[key])) 
             num_test_events  = len(self.event_list[key]) - num_train_events
-
-            #print(f"len event_list[{key}]): {len(self.event_list[key])}")
-            #print(" num_train_events:", num_train_events)
-            #print(" num_test_events:", num_test_events)
 
             for i in range(len(self.event_list[key])) :
                 if i <= num_train_events :        
@@ -354,30 +350,18 @@ class ClassPowerAIDataHandler() :
         self.test_x_wrong = dict(zip([1,2,4,8,16,32,64,128,256,512,1024,2048], [[],[],[],[],[],[],[],[],[], [],[],[]]))
         self.test_x_correct = dict(zip([1,2,4,8,16,32,64,128,256,512,1024,2048], [[],[],[],[],[],[],[],[],[], [],[],[]]))
 
+        #calculate percentage of correct classifications
         for i in range(test_x.shape[0]) :
             predicted_pos = np.argmax(predict_y[i])
-            #predicted_device = self.device_ids_order[predicted_pos]
-            
-            #print(f'predicted_pos: {predicted_pos}')
-            #print(f'self.device_ids_order: {self.device_ids_order}')
-            #print(f'predicted_device: {predicted_device}')
-
-            #test_device_array_pos = np.argwhere(test_y[i] > 0)
             test_device_array_pos = np.argmax(test_y[i])
-            #test_device = int(self.device_ids_order[test_device_array_pos[0]])
             
-            #print(f'test_device_array_pos: {test_device_array_pos}')
-            #print(f'test_device: {test_device}')
-
-            #if predicted_device != test_device :  #OKO: fixed potential bug in line 218 ????
-            if predicted_pos != test_device_array_pos :  #OKO: fixed potential bug in line 218 ????
+            if predicted_pos != test_device_array_pos :
                 self.cnt_wrong[test_device_array_pos] = self.cnt_wrong[test_device_array_pos] + 1
                 #self.test_x_wrong[test_device] = np.append(self.test_x_wrong[test_device], test_x[i])
             else :
                 self.cnt_correct[test_device_array_pos] = self.cnt_correct[test_device_array_pos] + 1
                 #self.test_x_correct[test_device] = np.append(self.test_x_correct[test_device], test_x[i])
                 
-    
         result_table = PrettyTable(['device name', 'total', 'correct', 'wrong', 'percent'], align='r')
     
         for i in range(len(self.device_list)) :
@@ -388,4 +372,20 @@ class ClassPowerAIDataHandler() :
                 int(self.cnt_wrong[i]),
                 str(round(100 * self.cnt_correct[i] / (self.cnt_correct[i] + self.cnt_wrong[i]))) + "%" if self.cnt_correct[i] + self.cnt_wrong[i] != 0 else ""])
 
+        print(result_table)
+
+        #cross comparision of classification results
+        counts = dict([(key, 0) for key in self.device_list.keys()])
+        for key in counts:
+            counts[key] = dict([(key, 0) for key in self.device_list.keys()])
+
+        for i in range(predict_y.shape[0]):
+            counts[self.device_ids_order[np.argmax(train_y[i])]][self.device_ids_order[np.argmax(predict_y[i])]] = counts[self.device_ids_order[np.argmax(train_y[i])]][self.device_ids_order[np.argmax(predict_y[i])]] + 1
+
+            result_table = PrettyTable(range(len(self.device_list)+1), align='r')
+            
+        for key in self.device_list :
+            result_table.add_row(
+                np.append(np.array([key]), list(counts[key].values()))
+            )
         print(result_table)
