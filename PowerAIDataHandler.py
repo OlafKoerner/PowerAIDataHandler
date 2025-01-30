@@ -302,7 +302,7 @@ class ClassPowerAIDataHandler() :
         train_y = train_y[idx]
         print(f'randomized batches')
         print(f'train_x (batch num, window length): {train_x.shape}\ntrain_y (batch num, device num): {train_y.shape}\ntest_x  (batch num, window length): {test_x.shape}\ntest_y  (batch num, device num): {test_y.shape}')
-        return train_x, train_y, test_x, test_y
+        return train_x, train_y
 
     
     def generate_test_data_from_events(self, event_ratio) :
