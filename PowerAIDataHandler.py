@@ -294,7 +294,7 @@ class ClassPowerAIDataHandler() :
         std_val = np.std(train_x)
         # Perform z-score normalization
         train_x = (train_x - mean_val) / std_val
-        print(f'z-normalization gives mean = {np.mean(train_x)} and std = {np.std(train_x)}')
+        print(f'z-normalize power values with mean = {mean_val} and std = {std_val}')
         
         # randomization of batches
         idx = np.random.permutation(len(train_x))
